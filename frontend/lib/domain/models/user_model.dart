@@ -6,7 +6,6 @@ class UserModel {
   final String name;
   final String email;
   final DateTime birthDate;
-  //final String cep;
   final String? avatarUrl;
 
   UserModel({
@@ -15,9 +14,24 @@ class UserModel {
     required this.name,
     required this.email,
     required this.birthDate,
-    //required this.cep,
     this.avatarUrl,
   });
+
+  /// Cria um UserModel a partir do JSON retornado pelo endpoint de login.
+  /// Espera a estrutura: { "access": "...", "refresh": "...", "user": { ... } }
+  factory UserModel.fromLoginJson(Map<String, dynamic> json) {
+    final userData = json['user'] as Map<String, dynamic>;
+    return UserModel(
+      id: userData['id'],
+      username: userData['username'] ?? '',
+      name: userData['name'] ?? '',
+      email: userData['email'] ?? '',
+      birthDate: DateTime.parse(userData['birth_date'] ?? userData['birthDate'] ?? '1970-01-01'),
+      avatarUrl: userData['avatar_url'],
+      accessToken: json['access'],
+      refreshToken: json['refresh'],
+    );
+  }
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -38,7 +52,6 @@ class UserModel {
       'name': name,
       'email': email,
       'birthDate': birthDate.toIso8601String(),
-      //'cep': cep,
       'avatar_url': avatarUrl,
     };
   }
