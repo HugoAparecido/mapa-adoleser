@@ -29,9 +29,10 @@ import 'package:provider/provider.dart';
 GoRouter createRouter(AuthProvider auth) {
   return GoRouter(
     // TODO: oq é isso?
+    // Correção da rota do perfil para a home, caso o usuário não esteja logado.
     refreshListenable: auth,
     debugLogDiagnostics: true,
-    initialLocation: '/atividade/1',
+    initialLocation: '/',
     //errorBuilder: (context, state) => const ErrorPage(),
     redirect: (context, state) => authGuard(auth, state),
     routes: [

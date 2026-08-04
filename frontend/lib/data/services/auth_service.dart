@@ -17,16 +17,11 @@ import 'package:mapa_adoleser/domain/requests/reset_password_request_model.dart'
 import 'package:mapa_adoleser/domain/models/user_model.dart';
 
 class AuthService {
-  static const Map<String, String> _jsonHeaders = {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  };
+  Future<(UserModel, String)> login(LoginRequestModel data) async {
+    await Future.delayed(const Duration(seconds: 2)); // Simula chamada à API
 
-  /// Extrai a primeira mensagem de erro legível de uma resposta Django.
-  String _parseError(Map<String, dynamic> body, String fallback) {
-    for (final value in body.values) {
-      if (value is String) return value;
-      if (value is List && value.isNotEmpty) return value.first.toString();
+    if (data.email != 'vini.cotrim@hotmail.com') {
+      throw AuthException('Usuário não encontrado!');
     }
     return fallback;
   }
@@ -51,34 +46,50 @@ class AuthService {
       throw FetchDataException(
           _parseError(body, 'Erro ao fazer login. Tente novamente.'));
     }
+
+    // Simulando resposta da API
+    final mockResponse = {
+      'id': 1,
+      'name': 'Vinícius Martins Cotrim',
+      'username': 'coutrims',
+      'email': data.email,
+      'birthDate': '2025-08-11T01:37:16.936',
+      'cep': '13180-220',
+      'role': 'admin',
+      'avatar_url': null,
+      'token': 'abc.def.ghi',
+    };
+
+    final String token = mockResponse['token'] as String;
+
+    final UserModel user = UserModel.fromJson(mockResponse);
+
+    return (user, token);
   }
 
-  Future<UserModel> register(RegisterRequestModel data) async {
-    final response = await http.post(
-      Uri.parse(ApiConstants.register),
-      headers: _jsonHeaders,
-      body: jsonEncode({
-        'username': data.username,
-        'email': data.email,
-        'name': data.name,
-        'birth_date': data.birthDate.toIso8601String().split('T').first,
-        'password': data.password,
-        'password2': data.password,
-      }),
-    );
+  Future<(UserModel, String)> register(RegisterRequestModel data) async {
+    await Future.delayed(const Duration(seconds: 2)); // Simula chamada à API
 
-    final body = jsonDecode(response.body) as Map<String, dynamic>;
-
-    if (response.statusCode == 201) {
-      // Após o registro, o backend não retorna tokens — fazemos login automaticamente.
-      return await login(LoginRequestModel(
-        email: data.username,
-        password: data.password,
-      ));
-    } else {
-      throw AuthException(
-          _parseError(body, 'Erro ao criar conta. Verifique os dados e tente novamente.'));
+    if (data.email == 'usado@example.com') {
+      throw AuthException('E-mail já está em uso!');
     }
+
+    // Simulando resposta da API
+    final mockResponse = {
+      'id': 1,
+      'email': data.email,
+      'username': data.username,
+      'name': data.name,
+      'birthDate': data.birthDate.toIso8601String(),
+      'role': 'admin',
+      'avatar_url': null,
+      'token': 'abc.def.ghi',
+    };
+
+    final UserModel user = UserModel.fromJson(mockResponse);
+    final String token = mockResponse['token'] as String;
+
+    return (user, token);
   }
 
   Future<CheckCurrentPasswordResponseModel> changePasswordCheckCurrentPassword(
