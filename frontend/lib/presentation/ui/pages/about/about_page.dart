@@ -23,78 +23,64 @@ class AboutPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  AppTexts.about.aboutAdoleserTitle,
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 450),
-                  child: Column(
-                    spacing: 20,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        AppTexts.about.aboutPETBCCTitle,
-                        style: Theme.of(context).textTheme.headlineMedium,
-                      ),
-                      Text(
-                        AppTexts.about.aboutPETBCCParagraph,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        textAlign: TextAlign.justify,
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            child: Image.asset(
-                              'assets/images/logo_ufscar.png',
-                              height: 125,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Flexible(
-                            child: Image.asset(
-                              'assets/images/pet_logo_azul.png',
-                              height: 225,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                    ],
-                  ),
-                const SizedBox(height: 15),
-                SelectableText(
-                  AppTexts.about.aboutAdoleserParagraph,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  textAlign: TextAlign.justify,
-                ),
-                const SizedBox(height: 10),
-                Image.asset(
-                  'assets/images/megafonetexto.png',
-                  height: 200,
-                ),
-              ],
+            // ==========================================
+            // SEÇÃO 1: SOBRE O ADOLESER
+            // ==========================================
+            Text(
+              AppTexts.about.aboutAdoleserTitle,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 15),
+            SelectableText(
+              AppTexts.about.aboutAdoleserParagraph,
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.justify,
             ),
             const SizedBox(height: 20),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+            Image.asset(
+              'assets/images/megafonetexto.png',
+              height: 200,
+              fit: BoxFit
+                  .contain, // Boa prática para garantir que a imagem não distorça
+            ),
+
+            // Espaçamento grande para separar as seções
+            const SizedBox(height: 40),
+
+            // ==========================================
+            // SEÇÃO 2: SOBRE O PET BCC
+            // ==========================================
+            Text(
+              AppTexts.about.aboutPETBCCTitle,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 15),
+            SelectableText(
+              AppTexts.about.aboutPETBCCParagraph,
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.justify,
+            ),
+            const SizedBox(height: 20),
+
+            // Logos lado a lado
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  AppTexts.about.aboutPETBCCTitle,
-                  style: Theme.of(context).textTheme.headlineMedium,
+                Flexible(
+                  child: Image.asset(
+                    'assets/images/logo_ufscar.png',
+                    height: 125,
+                    fit: BoxFit.contain,
+                  ),
                 ),
-                const SizedBox(height: 15),
-                SelectableText(
-                  AppTexts.about.aboutPETBCCParagraph,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  textAlign: TextAlign.justify,
+                const SizedBox(
+                    width: 20), // Aumentei um pouco o respiro entre as logos
+                Flexible(
+                  child: Image.asset(
+                    'assets/images/pet_logo_azul.png',
+                    height: 225,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ],
             ),

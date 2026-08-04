@@ -20,16 +20,18 @@ class UserModel {
   /// Cria um UserModel a partir do JSON retornado pelo endpoint de login.
   /// Espera a estrutura: { "access": "...", "refresh": "...", "user": { ... } }
   factory UserModel.fromLoginJson(Map<String, dynamic> json) {
+    // Entra no objeto "user" da resposta da API
     final userData = json['user'] as Map<String, dynamic>;
+
     return UserModel(
       id: userData['id'],
       username: userData['username'] ?? '',
       name: userData['name'] ?? '',
       email: userData['email'] ?? '',
-      birthDate: DateTime.parse(userData['birth_date'] ?? userData['birthDate'] ?? '1970-01-01'),
+      birthDate: DateTime.parse(
+          userData['birth_date'] ?? userData['birthDate'] ?? '1970-01-01'),
       avatarUrl: userData['avatar_url'],
-      accessToken: json['access'],
-      refreshToken: json['refresh'],
+      // REMOVIDO: accessToken e refreshToken não pertencem mais a esta classe!
     );
   }
 
@@ -39,7 +41,6 @@ class UserModel {
       username: json['username'] ?? '',
       name: json['name'] ?? '',
       email: json['email'] ?? '',
-      //cep: json['cep'] ?? '',
       birthDate: DateTime.parse(json['birthDate']),
       avatarUrl: json['avatar_url'] ?? '',
     );

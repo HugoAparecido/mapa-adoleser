@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:mapa_adoleser/core/api_constants.dart';
 import 'package:mapa_adoleser/core/errors/app_exception.dart';
@@ -17,16 +16,24 @@ import 'package:mapa_adoleser/domain/requests/reset_password_request_model.dart'
 import 'package:mapa_adoleser/domain/models/user_model.dart';
 
 class AuthService {
-  Future<(UserModel, String)> login(LoginRequestModel data) async {
-    await Future.delayed(const Duration(seconds: 2)); // Simula chamada à API
+  // Adicionado o cabeçalho padrão para requisições JSON
+  final Map<String, String> _jsonHeaders = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
 
-    if (data.email != 'vini.cotrim@hotmail.com') {
-      throw AuthException('Usuário não encontrado!');
+  // Adicionada a função auxiliar de erro que estava faltando
+  String _parseError(Map<String, dynamic> body, String defaultMessage) {
+    if (body.containsKey('message') && body['message'] != null) {
+      return body['message'];
+    } else if (body.containsKey('error') && body['error'] != null) {
+      return body['error'];
     }
-    return fallback;
+    return defaultMessage;
   }
 
-  Future<UserModel> login(LoginRequestModel data) async {
+  // Apenas UM método login, agora conectando na API real e retornando a Tupla (Record)
+  Future<(UserModel, String)> login(LoginRequestModel data) async {
     final response = await http.post(
       Uri.parse(ApiConstants.login),
       headers: _jsonHeaders,
@@ -39,32 +46,20 @@ class AuthService {
     final body = jsonDecode(response.body) as Map<String, dynamic>;
 
     if (response.statusCode == 200) {
-      return UserModel.fromLoginJson(body);
+      // Extrai o token do JSON da API (ajuste a chave 'token' caso sua API use 'access_token', etc.)
+      final String token = body['token'] ?? body['access'] ?? '';
+
+      // Cria o modelo do usuário com o restante dos dados
+      final UserModel user = UserModel.fromJson(body);
+
+      // Retorna os dois!
+      return (user, token);
     } else if (response.statusCode == 401) {
       throw AuthException('Usuário ou senha inválidos.');
     } else {
       throw FetchDataException(
           _parseError(body, 'Erro ao fazer login. Tente novamente.'));
     }
-
-    // Simulando resposta da API
-    final mockResponse = {
-      'id': 1,
-      'name': 'Vinícius Martins Cotrim',
-      'username': 'coutrims',
-      'email': data.email,
-      'birthDate': '2025-08-11T01:37:16.936',
-      'cep': '13180-220',
-      'role': 'admin',
-      'avatar_url': null,
-      'token': 'abc.def.ghi',
-    };
-
-    final String token = mockResponse['token'] as String;
-
-    final UserModel user = UserModel.fromJson(mockResponse);
-
-    return (user, token);
   }
 
   Future<(UserModel, String)> register(RegisterRequestModel data) async {
@@ -100,7 +95,8 @@ class AuthService {
   }
 
   Future<ChangePasswordResponseModel> changePasswordChangePassword(
-      ChangePasswordRequestModel data, [String accessToken = '']) async {
+      ChangePasswordRequestModel data,
+      [String accessToken = '']) async {
     final response = await http.put(
       Uri.parse(ApiConstants.changePassword),
       headers: {
@@ -155,7 +151,8 @@ class AuthService {
       headers: _jsonHeaders,
       body: jsonEncode({
         'email': request.email,
-        'reset_code': request.password, // TODO: adicionar campo 'code' ao ResetPasswordRequestModel
+        'reset_code': request
+            .password, // TODO: adicionar campo 'code' ao ResetPasswordRequestModel
         'new_password': request.password,
         'confirm_password': request.password,
       }),
@@ -164,8 +161,7 @@ class AuthService {
     final body = jsonDecode(response.body) as Map<String, dynamic>;
 
     if (response.statusCode != 200) {
-      throw AuthException(
-          _parseError(body, 'Erro ao redefinir senha.'));
+      throw AuthException(_parseError(body, 'Erro ao redefinir senha.'));
     }
   }
 }
