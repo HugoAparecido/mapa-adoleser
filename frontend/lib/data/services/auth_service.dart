@@ -50,7 +50,7 @@ class AuthService {
       final String token = body['token'] ?? body['access'] ?? '';
 
       // Cria o modelo do usuário com o restante dos dados
-      final UserModel user = UserModel.fromJson(body);
+      final UserModel user = UserModel.fromLoginJson(body);
 
       // Retorna os dois!
       return (user, token);

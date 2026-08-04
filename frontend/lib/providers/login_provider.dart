@@ -27,9 +27,7 @@ class LoginProvider extends ChangeNotifier {
 
       final String token = responseData.$2;
 
-      final UserModel userModel = responseData.$1;
-
-      final UserModel user = UserModel.fromJson(userModel.toJson());
+      final UserModel user = responseData.$1;
 
       _loading = false;
       notifyListeners();
