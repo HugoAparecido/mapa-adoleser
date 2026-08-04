@@ -13,7 +13,7 @@ import 'package:mapa_adoleser/domain/models/reset_password_request_model.dart';
 import 'package:mapa_adoleser/domain/models/user_model.dart';
 
 class AuthService {
-  Future<UserModel> login(LoginRequestModel data) async {
+  Future<(UserModel, String)> login(LoginRequestModel data) async {
     await Future.delayed(const Duration(seconds: 2)); // Simula chamada à API
 
     if (data.email != 'vini.cotrim@hotmail.com') {
@@ -37,10 +37,14 @@ class AuthService {
       'token': 'abc.def.ghi',
     };
 
-    return UserModel.fromJson(mockResponse);
+    final String token = mockResponse['token'] as String;
+
+    final UserModel user = UserModel.fromJson(mockResponse);
+
+    return (user, token);
   }
 
-  Future<UserModel> register(RegisterRequestModel data) async {
+  Future<(UserModel, String)> register(RegisterRequestModel data) async {
     await Future.delayed(const Duration(seconds: 2)); // Simula chamada à API
 
     if (data.email == 'usado@example.com') {
@@ -59,7 +63,10 @@ class AuthService {
       'token': 'abc.def.ghi',
     };
 
-    return UserModel.fromJson(mockResponse);
+    final UserModel user = UserModel.fromJson(mockResponse);
+    final String token = mockResponse['token'] as String;
+
+    return (user, token);
   }
 
   Future<CheckCurrentPasswordResponseModel> changePasswordCheckCurrentPassword(

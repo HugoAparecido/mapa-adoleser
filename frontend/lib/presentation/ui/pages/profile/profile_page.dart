@@ -91,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage> {
           DateTime.parse('$year-$month-$day'));
 
       if (profileProvider.success && mounted) {
-        authProvider.setUser(user!);
+        authProvider.updateUser(user!);
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

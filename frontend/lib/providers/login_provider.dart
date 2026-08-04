@@ -14,25 +14,32 @@ class LoginProvider extends ChangeNotifier {
   String? get error => _error;
   bool get isLoading => _loading;
 
-  Future<UserModel?> login(String email, String password) async {
+  Future<(UserModel, String)?> login(String email, String password) async {
     _loading = true;
     _error = null;
 
     notifyListeners();
 
-    UserModel? user;
-
     try {
       final request = LoginRequestModel(email: email, password: password);
-      user = await _authService.login(request);
+      final (UserModel, String) responseData =
+          await _authService.login(request);
+
+      final String token = responseData.$2;
+
+      final UserModel userModel = responseData.$1;
+
+      final UserModel user = UserModel.fromJson(userModel.toJson());
+
+      _loading = false;
+      notifyListeners();
+
+      return (user, token);
     } catch (e) {
       _error = parseException(e);
+      _loading = false;
+      notifyListeners();
+      return null;
     }
-
-    _loading = false;
-
-    notifyListeners();
-
-    return user;
   }
 }

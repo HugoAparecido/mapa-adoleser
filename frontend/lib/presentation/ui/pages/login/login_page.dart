@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:mapa_adoleser/core/constants.dart';
 import 'package:mapa_adoleser/core/theme/app_colors.dart';
 import 'package:mapa_adoleser/core/utils/validators.dart';
-import 'package:mapa_adoleser/domain/models/user_model.dart';
 import 'package:mapa_adoleser/presentation/ui/modal_wrapper.dart';
 import 'package:mapa_adoleser/presentation/ui/widgets/action_text.dart';
 import 'package:mapa_adoleser/presentation/ui/widgets/appbar/custom_app_bar.dart';
@@ -54,15 +53,14 @@ class _LoginPageState extends State<LoginPage> {
       final loginProvider = context.read<LoginProvider>();
       final authProvider = context.read<AuthProvider>();
 
-      await loginProvider
-          .login(_emailController.text, _passwordController.text)
-          .then((UserModel? model) {
-        if (model != null) {
-          authProvider.setUser(model);
-        }
-      });
+      final result = await loginProvider.login(
+          _emailController.text, _passwordController.text);
 
-      if (loginProvider.error == null && mounted) {
+      if (loginProvider.error == null && result != null && mounted) {
+        await authProvider.saveAuthData(result.$1, result.$2);
+
+        if (!mounted) return;
+
         context.go('/');
       }
     }

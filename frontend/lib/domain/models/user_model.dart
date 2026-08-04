@@ -8,7 +8,6 @@ class UserModel {
   final DateTime birthDate;
   //final String cep;
   final String? avatarUrl;
-  final String? token; // se for retornado no login
 
   UserModel({
     required this.username,
@@ -18,7 +17,6 @@ class UserModel {
     required this.birthDate,
     //required this.cep,
     this.avatarUrl,
-    this.token,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -30,7 +28,6 @@ class UserModel {
       //cep: json['cep'] ?? '',
       birthDate: DateTime.parse(json['birthDate']),
       avatarUrl: json['avatar_url'] ?? '',
-      token: json['token'] ?? '',
     );
   }
 
@@ -43,12 +40,11 @@ class UserModel {
       'birthDate': birthDate.toIso8601String(),
       //'cep': cep,
       'avatar_url': avatarUrl,
-      'token': token,
     };
   }
 
   @override
   String toString() {
-    return 'UserModel{id: $id, username: $username, name: $name, email: $email, birthDate: ${birthDate.toIso8601String()}, avatarUrl: $avatarUrl, token: $token}';
+    return 'UserModel{id: $id, username: $username, name: $name, email: $email, birthDate: ${birthDate.toIso8601String()}, avatarUrl: $avatarUrl}';
   }
 }
