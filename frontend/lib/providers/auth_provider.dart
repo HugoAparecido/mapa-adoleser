@@ -11,6 +11,7 @@ class AuthProvider extends ChangeNotifier {
 
   static const String _userKey = 'user_data';
   static const String _tokenKey = 'auth_token';
+  static const String _refreshTokenKey = 'refresh_token';
 
   UserModel? _user;
   String? _token;
@@ -22,11 +23,13 @@ class AuthProvider extends ChangeNotifier {
     _loadUserFromStorage();
   }
 
-  Future<void> saveAuthData(UserModel user, String token) async {
+  Future<void> saveAuthData(
+      UserModel user, String token, String refreshToken) async {
     _user = user;
     _token = token;
 
     await _secureStorage.write(key: _tokenKey, value: token);
+    await _secureStorage.write(key: _refreshTokenKey, value: refreshToken);
 
     final prefs = await SharedPreferences.getInstance();
     final jsonData = jsonEncode(user.toJson());
@@ -41,6 +44,7 @@ class AuthProvider extends ChangeNotifier {
     _token = null;
 
     await _secureStorage.delete(key: _tokenKey);
+    await _secureStorage.delete(key: _refreshTokenKey);
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_userKey);

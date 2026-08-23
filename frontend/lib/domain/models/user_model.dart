@@ -26,10 +26,9 @@ class UserModel {
       username: userData['username'] ?? '',
       name: userData['name'] ?? '',
       email: userData['email'] ?? '',
-      birthDate: DateTime.parse(userData['birth_date'] ?? userData['birthDate'] ?? '1970-01-01'),
+      birthDate: DateTime.parse(
+          userData['birth_date'] ?? userData['birthDate'] ?? '1970-01-01'),
       avatarUrl: userData['avatar_url'],
-      accessToken: json['access'],
-      refreshToken: json['refresh'],
     );
   }
 

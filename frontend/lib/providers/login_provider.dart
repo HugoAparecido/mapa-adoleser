@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mapa_adoleser/core/helpers/error_handler.dart';
 import 'package:mapa_adoleser/data/services/auth_service.dart';
 import 'package:mapa_adoleser/domain/requests/login_request_model.dart';
-import 'package:mapa_adoleser/domain/models/user_model.dart';
+import 'package:mapa_adoleser/providers/auth_provider.dart';
 
 class LoginProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
@@ -14,7 +14,8 @@ class LoginProvider extends ChangeNotifier {
   String? get error => _error;
   bool get isLoading => _loading;
 
-  Future<(UserModel, String)?> login(String email, String password) async {
+  Future<bool> login(
+      String email, String password, AuthProvider authProvider) async {
     _loading = true;
     _error = null;
 
@@ -22,24 +23,21 @@ class LoginProvider extends ChangeNotifier {
 
     try {
       final request = LoginRequestModel(email: email, password: password);
-      final (UserModel, String) responseData =
+
+      final (userModel, accessToken, refreshToken) =
           await _authService.login(request);
 
-      final String token = responseData.$2;
-
-      final UserModel userModel = responseData.$1;
-
-      final UserModel user = UserModel.fromJson(userModel.toJson());
+      await authProvider.saveAuthData(userModel, accessToken, refreshToken);
 
       _loading = false;
       notifyListeners();
 
-      return (user, token);
+      return true;
     } catch (e) {
       _error = parseException(e);
       _loading = false;
       notifyListeners();
-      return null;
+      return false;
     }
   }
 }

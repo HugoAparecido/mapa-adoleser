@@ -52,14 +52,13 @@ class _LoginPageState extends State<LoginPage> {
       final loginProvider = context.read<LoginProvider>();
       final authProvider = context.read<AuthProvider>();
 
-      final result = await loginProvider.login(
-          _emailController.text, _passwordController.text);
+      final success = await loginProvider.login(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+        authProvider,
+      );
 
-      if (loginProvider.error == null && result != null && mounted) {
-        await authProvider.saveAuthData(result.$1, result.$2);
-
-        if (!mounted) return;
-
+      if (success && mounted) {
         context.go('/');
       }
     }

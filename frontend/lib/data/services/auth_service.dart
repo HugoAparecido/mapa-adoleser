@@ -17,16 +17,21 @@ import 'package:mapa_adoleser/domain/requests/reset_password_request_model.dart'
 import 'package:mapa_adoleser/domain/models/user_model.dart';
 
 class AuthService {
-  Future<(UserModel, String)> login(LoginRequestModel data) async {
-    await Future.delayed(const Duration(seconds: 2)); // Simula chamada à API
+  static const Map<String, String> _jsonHeaders = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
 
-    if (data.email != 'vini.cotrim@hotmail.com') {
-      throw AuthException('Usuário não encontrado!');
+  // Extrai a primeira mensagem de erro legível de uma resposta Django.
+  String _parseError(Map<String, dynamic> body, String fallback) {
+    for (final value in body.values) {
+      if (value is String) return value;
+      if (value is List && value.isNotEmpty) return value.first.toString();
     }
     return fallback;
   }
 
-  Future<UserModel> login(LoginRequestModel data) async {
+  Future<(UserModel, String, String)> login(LoginRequestModel data) async {
     final response = await http.post(
       Uri.parse(ApiConstants.login),
       headers: _jsonHeaders,
@@ -39,32 +44,17 @@ class AuthService {
     final body = jsonDecode(response.body) as Map<String, dynamic>;
 
     if (response.statusCode == 200) {
-      return UserModel.fromLoginJson(body);
+      final user = UserModel.fromLoginJson(body);
+      final accessToken = body['access'] as String;
+      final refreshToken = body['refresh'] as String;
+
+      return (user, accessToken, refreshToken);
     } else if (response.statusCode == 401) {
       throw AuthException('Usuário ou senha inválidos.');
     } else {
       throw FetchDataException(
           _parseError(body, 'Erro ao fazer login. Tente novamente.'));
     }
-
-    // Simulando resposta da API
-    final mockResponse = {
-      'id': 1,
-      'name': 'Vinícius Martins Cotrim',
-      'username': 'coutrims',
-      'email': data.email,
-      'birthDate': '2025-08-11T01:37:16.936',
-      'cep': '13180-220',
-      'role': 'admin',
-      'avatar_url': null,
-      'token': 'abc.def.ghi',
-    };
-
-    final String token = mockResponse['token'] as String;
-
-    final UserModel user = UserModel.fromJson(mockResponse);
-
-    return (user, token);
   }
 
   Future<(UserModel, String)> register(RegisterRequestModel data) async {
@@ -100,7 +90,8 @@ class AuthService {
   }
 
   Future<ChangePasswordResponseModel> changePasswordChangePassword(
-      ChangePasswordRequestModel data, [String accessToken = '']) async {
+      ChangePasswordRequestModel data,
+      [String accessToken = '']) async {
     final response = await http.put(
       Uri.parse(ApiConstants.changePassword),
       headers: {
@@ -155,7 +146,8 @@ class AuthService {
       headers: _jsonHeaders,
       body: jsonEncode({
         'email': request.email,
-        'reset_code': request.password, // TODO: adicionar campo 'code' ao ResetPasswordRequestModel
+        'reset_code': request
+            .password, // TODO: adicionar campo 'code' ao ResetPasswordRequestModel
         'new_password': request.password,
         'confirm_password': request.password,
       }),
@@ -164,8 +156,7 @@ class AuthService {
     final body = jsonDecode(response.body) as Map<String, dynamic>;
 
     if (response.statusCode != 200) {
-      throw AuthException(
-          _parseError(body, 'Erro ao redefinir senha.'));
+      throw AuthException(_parseError(body, 'Erro ao redefinir senha.'));
     }
   }
 }
