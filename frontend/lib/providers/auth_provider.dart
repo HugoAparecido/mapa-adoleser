@@ -23,18 +23,20 @@ class AuthProvider extends ChangeNotifier {
     _loadUserFromStorage();
   }
 
-  Future<void> saveAuthData(
-      UserModel user, String token, String refreshToken) async {
+  Future<void> saveAuthData(UserModel user, String token, String refreshToken,
+      {bool rememberMe = true}) async {
     _user = user;
     _token = token;
 
-    await _secureStorage.write(key: _tokenKey, value: token);
-    await _secureStorage.write(key: _refreshTokenKey, value: refreshToken);
+    if (rememberMe) {
+      await _secureStorage.write(key: _tokenKey, value: token);
+      await _secureStorage.write(key: _refreshTokenKey, value: refreshToken);
 
-    final prefs = await SharedPreferences.getInstance();
-    final jsonData = jsonEncode(user.toJson());
+      final prefs = await SharedPreferences.getInstance();
+      final jsonData = jsonEncode(user.toJson());
 
-    await prefs.setString(_userKey, jsonData);
+      await prefs.setString(_userKey, jsonData);
+    }
 
     notifyListeners();
   }

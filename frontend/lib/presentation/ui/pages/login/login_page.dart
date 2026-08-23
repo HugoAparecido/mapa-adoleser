@@ -55,6 +55,7 @@ class _LoginPageState extends State<LoginPage> {
       final success = await loginProvider.login(
         _emailController.text.trim(),
         _passwordController.text.trim(),
+        rememberMe,
         authProvider,
       );
 

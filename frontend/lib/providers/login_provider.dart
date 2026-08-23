@@ -14,8 +14,8 @@ class LoginProvider extends ChangeNotifier {
   String? get error => _error;
   bool get isLoading => _loading;
 
-  Future<bool> login(
-      String email, String password, AuthProvider authProvider) async {
+  Future<bool> login(String email, String password, bool rememberMe,
+      AuthProvider authProvider) async {
     _loading = true;
     _error = null;
 
@@ -27,7 +27,8 @@ class LoginProvider extends ChangeNotifier {
       final (userModel, accessToken, refreshToken) =
           await _authService.login(request);
 
-      await authProvider.saveAuthData(userModel, accessToken, refreshToken);
+      await authProvider.saveAuthData(userModel, accessToken, refreshToken,
+          rememberMe: rememberMe);
 
       _loading = false;
       notifyListeners();
