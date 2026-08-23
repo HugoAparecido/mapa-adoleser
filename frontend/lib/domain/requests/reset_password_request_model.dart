@@ -1,10 +1,12 @@
 class ResetPasswordRequestModel {
   final String email;
   final String password;
+  final String code;
 
   ResetPasswordRequestModel({
     required this.email,
     required this.password,
+    required this.code,
   });
 
   Map<String, dynamic> toJson() {

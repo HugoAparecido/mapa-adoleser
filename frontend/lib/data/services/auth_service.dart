@@ -146,8 +146,7 @@ class AuthService {
       headers: _jsonHeaders,
       body: jsonEncode({
         'email': request.email,
-        'reset_code': request
-            .password, // TODO: adicionar campo 'code' ao ResetPasswordRequestModel
+        'reset_code': request.code,
         'new_password': request.password,
         'confirm_password': request.password,
       }),

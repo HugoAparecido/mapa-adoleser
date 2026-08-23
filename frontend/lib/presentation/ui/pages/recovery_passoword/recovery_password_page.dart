@@ -139,6 +139,7 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
       await recoveryPasswordProvider.resetPassword(
         _emailController.text,
         _passwordController.text,
+        _codeController.text,
       );
 
       if (mounted && recoveryPasswordProvider.error == null) {

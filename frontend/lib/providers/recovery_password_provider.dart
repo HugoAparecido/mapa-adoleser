@@ -56,7 +56,7 @@ class RecoveryPasswordProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> resetPassword(String email, String password) async {
+  Future<void> resetPassword(String email, String password, String code) async {
     _loading = true;
     _error = null;
 
@@ -66,6 +66,7 @@ class RecoveryPasswordProvider extends ChangeNotifier {
       final request = ResetPasswordRequestModel(
         email: email,
         password: password,
+        code: code,
       );
 
       await _authService.recoveryPasswordResetPassword(request);

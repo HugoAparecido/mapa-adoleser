@@ -66,9 +66,9 @@ class AboutPage extends StatelessWidget {
                           ),
                         ],
                       ),
-
                     ],
                   ),
+                ),
                 const SizedBox(height: 15),
                 SelectableText(
                   AppTexts.about.aboutAdoleserParagraph,
